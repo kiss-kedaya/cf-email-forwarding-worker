@@ -11,7 +11,7 @@
 		"enabled": true
 	},
 	"vars": {
-		"APP_API_URL": "https://wr.do/api/v1/email-catcher"
+		"APP_API_URL": "https://api.kedaya.xyz/api/v1/email-catcher"
 	},
 	"r2_buckets": [
 		{
