@@ -16,6 +16,10 @@ export default {
 			return;
 		}
 
+		// 保存原始发件人和收件人信息
+		const originalFrom = message.from;
+		const originalTo = message.to;
+
 		const emailData = {
 			from: message.from,
 			fromName: email.from.name || '',
@@ -28,13 +32,28 @@ export default {
 			cc: JSON.stringify(email.cc || []), // 抄送人
 			replyTo: email.replyTo || '',
 			headers: JSON.stringify(email.headers || []),
+			// 添加原始发件人和收件人作为单独的字段
+			originalFrom: originalFrom,
+			originalTo: originalTo,
 			attachments: [] as {
 				filename: string;
 				mimeType: string;
 				r2Path: string;
-				size: number; // 添加附件大小
+				size: number;
 			}[],
 		};
+
+		// 修改邮件内容，添加原始收件人信息
+		const originalToInfo = `\n\n原始接收地址: ${originalTo}`;
+		emailData.text = emailData.text + originalToInfo;
+
+		// 如果有HTML内容，也添加到HTML中
+		if (emailData.html) {
+			emailData.html = emailData.html.replace(
+				'</body>',
+				`<div style="margin-top: 20px; border-top: 1px solid #ccc; padding-top: 10px; color: #666;">原始接收地址: ${originalTo}</div></body>`
+			);
+		}
 
 		if (email.attachments && email.attachments.length > 0) {
 			const date = new Date();
